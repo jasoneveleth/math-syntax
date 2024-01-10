@@ -27,7 +27,6 @@ class Lexer():
 assoc = { # 1 means left-assoc: (1 - 2) - 3
     '+': 1, '-': 1, '*': 1, '/': 1,
     '^': 0,
-    '!': 1, # factorial
     '$': 0, # function application
     '|': 0, # operator application
     '(': 0, # grouping, kinda wrong way of thinking about it
