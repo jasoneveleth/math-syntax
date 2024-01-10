@@ -32,18 +32,20 @@ class Lexer():
 assoc = { # 1 means left-assoc: (1 - 2) - 3
     '+': 1, '-': 1, '*': 1, '/': 1,
     '^': 0,
+    '.': 1, # function composition
     '!': 1, # factorial
     '$': 0, # function application
-    '|': 0, # operator application
+    '|': 0, # derivative
     '(': 0, # grouping, kinda wrong way of thinking about it
 }
 
 infix_bp = {
-    '+': 1, '-': 1, 
-    '*': 2, '/': 2,
-    '^': 3,
-    '$': 4,
-    '|': 5,
+    '+': 1, '-': 1,
+    '.': 2,
+    '*': 3, '/': 3,
+    '^': 4,
+    '$': 5,
+    '|': 6,
 }
 
 prefix_bp = {

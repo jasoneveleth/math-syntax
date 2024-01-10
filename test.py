@@ -37,11 +37,28 @@ def tests(parse, features):
         eq("a(((0)))", "(* a 0)")
         eq("a(b + c)", "(* a (+ b c))")
         eq("D^2f(x)", "(((^ D 2) f) x)")
+        eq("f . g + h", "(+ (. f g) h)")
+        eq("D(f . g)", "(D (. f g))")
+        eq("Df . g", "(. (D f) g)")
     # eq("a!", "(! a)")
 
     print("\033[32mOK\033[39m")
 
 def main():
+    if len(sys.argv) == 1 or sys.argv[1] == '-h' or sys.argv[1] == '--help':
+        yellow = "\033[33m"
+        green = "\033[32m"
+        done = "\033[39m"
+        print(f"{yellow}USAGE:{done}")
+        print(f"    python {sys.argv[0]} FILES")
+        print()
+        print(f"{yellow}FILES:{done}")
+        print(f"    {green}infix{done}   use at least one of these")
+        print(f"    {green}prefix{done}")
+        print(f"    {green}juxt{done}")
+        print(f"    {green}paren{done}")
+        return 0
+
     for file in sys.argv[1:]:
         if file == 'infix':
             from infix import parse
@@ -57,7 +74,8 @@ def main():
             tests(parse, {'infix', 'prefix', 'juxt', 'paren'})
         else:
             print(f"{file} must be `infix`, `prefix`, `juxt`, `paren`", file=sys.stderr)
-            exit(1)
+            return 1
+    return 0
 
-main()
+exit(main())
 

@@ -1,11 +1,22 @@
+# Description
+
+- `infix.py` is a Pratt parser that just does infix
+- `prefix.py` adds prefix parsing
+- `juxt.py` adds implicit * juxtapose
+- `paren.py` adds parethesis grouping and function application
+
+They are meant to be looked at in order using `diff` to see the changes required.
+I have spent a lot of time making it as intelligible as possible so hopefully no explanation
+is necessary.
+
+Run tests with `python test.py infix prefix juxt paren` or just `python test.py paren`
+
 ## missing:
 
-- '.' composition
 - '>=' '>' '<' '<=' comparison
 - '==' '!=' && || boolean operators
 - {1, 2, 3} sets, vector [1, 2, 3]
 - \in \subset \union \intersection \difference \disjoint-union (or +) set ops
-
 
 ## outputs:
 
@@ -13,8 +24,3 @@
 - [ ] RPN
 - [ ] code, like python (explicit *)
 - [ ] fully parenthesized
-
-
-## Justification for why it can't be pretty
-
-The reason we can't do the nice paren thing is every ( needs to consume a ) but we have infix parens, which means we'd need weird logic for that. We can avoid that by consuming on entry to loop and breaking.
