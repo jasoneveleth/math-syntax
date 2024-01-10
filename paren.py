@@ -68,12 +68,10 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
         op = lexer.peek()
         if lexer.peek_juxtapose():
             op = {0: '*', 1: '*', 2: '|'}[order(lhs)]
+        bp = infix_bp[op] + assoc[op] if op != '(' else 0
 
         if op == '(':
             op = {0: '*', 1: '$', 2: '|'}[order(lhs)]
-            bp = 0
-        else:
-            bp = infix_bp[op] + assoc[op]
 
         if infix_bp[op] < min_bp:
             break
