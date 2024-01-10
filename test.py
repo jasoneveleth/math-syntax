@@ -1,28 +1,6 @@
 import sys
 
-features = set()
-if sys.argv[1] == 'infix':
-    from infix import parse
-    features.add('infix')
-elif sys.argv[1] == 'prefix':
-    from prefix import parse
-    features.add('infix')
-    features.add('prefix')
-elif sys.argv[1] == 'juxt':
-    from juxt import parse
-    features.add('infix')
-    features.add('prefix')
-    features.add('juxt')
-elif sys.argv[1] == 'paren':
-    from paren import parse
-    features.add('infix')
-    features.add('prefix')
-    features.add('juxt')
-    features.add('paren')
-else:
-    print("must be `infix`, `prefix`, `juxt`, `paren`", file=sys.stderr)
-
-def tests():
+def tests(parse, features):
     def eq(input, sexp):
         out = str(parse(input))
         assert(out == sexp)
@@ -63,5 +41,23 @@ def tests():
 
     print("\033[32mOK\033[39m")
 
-tests()
+def main():
+    for file in sys.argv[1:]:
+        if file == 'infix':
+            from infix import parse
+            tests(parse, {'infix'})
+        elif file == 'prefix':
+            from prefix import parse
+            tests(parse, {'infix', 'prefix'})
+        elif file == 'juxt':
+            from juxt import parse
+            tests(parse, {'infix', 'prefix', 'juxt'})
+        elif file == 'paren':
+            from paren import parse
+            tests(parse, {'infix', 'prefix', 'juxt', 'paren'})
+        else:
+            print(f"{file} must be `infix`, `prefix`, `juxt`, `paren`", file=sys.stderr)
+            exit(1)
+
+main()
 
