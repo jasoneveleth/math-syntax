@@ -1,4 +1,5 @@
 import sys
+import importlib
 
 def tests(parse, features):
     def eq(input, ans):
@@ -61,16 +62,16 @@ def main():
 
     for file in sys.argv[1:]:
         if file == 'infix':
-            from infix import parse
+            parse = importlib.import_module('1-infix').parse
             tests(parse, {'infix'})
         elif file == 'prefix':
-            from prefix import parse
+            parse = importlib.import_module('2-prefix').parse
             tests(parse, {'infix', 'prefix'})
         elif file == 'juxt':
-            from juxt import parse
+            parse = importlib.import_module('3-juxt').parse
             tests(parse, {'infix', 'prefix', 'juxt'})
         elif file == 'paren':
-            from paren import parse
+            parse = importlib.import_module('4-paren').parse
             tests(parse, {'infix', 'prefix', 'juxt', 'paren'})
         else:
             print(f"{file} must be `infix`, `prefix`, `juxt`, `paren`", file=sys.stderr)

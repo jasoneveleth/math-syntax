@@ -7,7 +7,7 @@ The following are Pratt parsers in increasing levels of expressiveness:
 - `juxt.py` adds implicit * juxtapose
 - `paren.py` adds parethesis grouping and function application
 
-They are meant to be looked at in order using `diff` to see the changes required.
+They are meant to be looked at in order using `diff` to see the changes introduced.
 I have spent a lot of time making it as intelligible as possible so hopefully no explanation
 is necessary.
 
@@ -23,7 +23,7 @@ Those are function and operator application.
 You can remove them and get normal lispy S-expressions with `strip_apps()` in `test.py`.
 The `sexp()` function in `test.py` will automatically do this.
 
-If you want another stringification, checkout the `test.py` which also has RPN, python, fully parenthesized syntax.
+If you want another stringification, checkout the `test.py` which also has RPN, python, and fully parenthesized syntax.
 
 ## missing:
 
