@@ -1,6 +1,8 @@
-# Description
+# Architecture
 
-- `infix.py` is a Pratt parser that just does infix
+The following are Pratt parsers in increasing levels of difficulty
+
+- `infix.py` just does infix
 - `prefix.py` adds prefix parsing
 - `juxt.py` adds implicit * juxtapose
 - `paren.py` adds parethesis grouping and function application
@@ -9,7 +11,12 @@ They are meant to be looked at in order using `diff` to see the changes required
 I have spent a lot of time making it as intelligible as possible so hopefully no explanation
 is necessary.
 
-Run tests with `python test.py infix prefix juxt paren` or just `python test.py paren`
+Run tests with `python test.py infix prefix juxt paren` or just `python test.py paren`.
+
+# Output
+
+The return value from `parse` in each parser will stringify as an S-expression.
+If you want another stringification, checkout the `test.py` which also has RPN, python, fully parenthesized
 
 ## missing:
 
@@ -18,9 +25,3 @@ Run tests with `python test.py infix prefix juxt paren` or just `python test.py 
 - {1, 2, 3} sets, vector [1, 2, 3]
 - \in \subset \union \intersection \difference \disjoint-union (or +) set ops
 
-## outputs:
-
-- [x] sexp
-- [ ] RPN
-- [ ] code, like python (explicit *)
-- [ ] fully parenthesized
