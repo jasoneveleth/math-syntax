@@ -1,0 +1,16 @@
+## missing:
+
+- '.' composition
+- '>=' '>' '<' '<=' comparison
+- '==' '!=' && || boolean operators
+- {1, 2, 3} sets, vector [1, 2, 3]
+- \in \subset \union \intersection \difference \disjoint-union (or +) set ops
+
+
+## outputs:
+
+- [x] sexp
+- [ ] RPN
+- [ ] code, like python (explicit *)
+- [ ] fully parenthesized
+
