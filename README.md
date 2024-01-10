@@ -15,7 +15,7 @@ Run tests with `test.py`. It will print the commandline args it needs with `pyth
 
 Finally, `cons.py` has definitions of `Atom` and `Cons` which we build our syntax tree from (like lisp).
 
-# Output
+# Syntax
 
 The return value from `parse` in each parser will stringify as an S-expression.
 You might notice some strange operators in the output, like `$` and `|`.
