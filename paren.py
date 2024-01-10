@@ -22,6 +22,8 @@ class Lexer():
             self.consume()
             return True
         return self.peek() is None
+    def peek_juxtapose(self):
+        return self.peek() not in infix_bp and self.peek() != '('
     def peek(self):
         try: return self.toks[-1]
         except IndexError: return None
@@ -66,20 +68,20 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
 
     while not lexer.is_done():
         op = lexer.peek()
-        fake_op = False
-        if op == '(':
-            lexer.consume()
-            lexer.push({0: '*', 1: '$', 2: '|'}[order(lhs)])
-        elif op not in infix_bp:
-            fake_op = True
-            lexer.push({0: '*', 1: '*', 2: '|'}[order(lhs)])
+        bp = infix_bp.get(op,0) + assoc.get(op,0)
 
-        if infix_bp[lexer.peek()] < min_bp:
-            if fake_op:
-                lexer.consume()
+        if op == '(':
+            op = {0: '*', 1: '$', 2: '|'}[order(lhs)]
+            bp = 0
+        elif op not in infix_bp:
+            op = {0: '*', 1: '*', 2: '|'}[order(lhs)]
+            bp = infix_bp[op] + assoc[op]
+
+        if infix_bp[op] < min_bp:
             break
-        op = lexer.consume()
-        rhs = pratt(lexer, infix_bp[op] + assoc[op])
+        if not lexer.peek_juxtapose():
+            lexer.consume()
+        rhs = pratt(lexer, bp)
         lhs = Cons([Atom(op), lhs, rhs])
     return lhs
 
@@ -134,6 +136,9 @@ def tests():
     eq("Df(x)", "((D f) x)")
     eq("DDf(x)", "((D (D f)) x)")
     eq("D(f)(x)", "((D f) x)")
+    eq("(((0)))", "0")
+    eq("a(((0)))", "(* a 0)")
+    eq("a(b + c)", "(* a (+ b c))")
     eq("D^2f(x)", "(((^ D 2) f) x)")
 
     # order()

@@ -43,10 +43,12 @@ def parse(s):
 def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
     lhs = Atom(lexer.consume())
     while not lexer.is_done():
-        if infix_bp[lexer.peek()] < min_bp:
+        op = lexer.peek()
+        bp = infix_bp[op] + assoc[op]
+        if infix_bp[op] < min_bp:
             break
-        op = lexer.consume()
-        rhs = pratt(lexer, infix_bp[op] + assoc[op])
+        lexer.consume()
+        rhs = pratt(lexer, bp)
         lhs = Cons([Atom(op), lhs, rhs])
     return lhs
 
