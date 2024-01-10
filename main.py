@@ -35,11 +35,21 @@ infix_bp = {
     '^': 3,
 }
 
+prefix_bp = {
+    '-': 1, '+': 1,
+}
+
 def parse(s):
     return pratt(Lexer(s), 0)
 
 def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
-    lhs = Atom(lexer.consume())
+    if lexer.peek() in prefix_bp:
+        op = lexer.consume()
+        rhs = pratt(lexer, prefix_bp[op] + assoc[op])
+        lhs = Cons([Atom(op), rhs])
+    else:
+        lhs = Atom(lexer.consume())
+
     while lexer.peek() is not None:
         op = lexer.peek()
         if infix_bp[op] < min_bp:
@@ -57,6 +67,9 @@ def tests():
     eq("1 + 2", "(+ 1 2)")
     eq("1 + 2 + 3", "(+ (+ 1 2) 3)")
     eq("1 + 2 * 3", "(+ 1 (* 2 3))")
+    eq("-1", "(- 1)")
+    eq("-1 + 3", "(+ (- 1) 3)")
+    eq("3 + -1 + 4", "(+ (+ 3 (- 1)) 4)")
     print("\033[32mOK\033[39m")
 
 tests()
