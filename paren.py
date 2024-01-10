@@ -17,6 +17,11 @@ class Lexer():
         return self.toks.pop()
     def push(self, op):
         self.toks.append(op)
+    def is_done(self):
+        if self.peek() == ')':
+            self.consume()
+            return True
+        return self.peek() is None
     def peek(self):
         try: return self.toks[-1]
         except IndexError: return None
@@ -49,30 +54,31 @@ def parse(s):
     return pratt(Lexer(s), 0)
 
 def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
-    if lexer.peek() == '(':
-        lexer.consume()
-        lhs = pratt(lexer, 0)
-        assert(lexer.consume() == ')')
-    elif lexer.peek() in prefix_bp:
+    if lexer.peek() in prefix_bp:
         op = lexer.consume()
         rhs = pratt(lexer, prefix_bp[op] + assoc[op])
         lhs = Cons([Atom(op), rhs])
+    elif lexer.peek() == '(':
+        lexer.consume()
+        lhs = pratt(lexer, 0)
     else:
         lhs = Atom(lexer.consume())
 
-    while lexer.peek() is not None and lexer.peek() != ')':
+    while not lexer.is_done():
         op = lexer.peek()
+        fake_op = False
         if op == '(':
             lexer.consume()
             lexer.push({0: '*', 1: '$', 2: '|'}[order(lhs)])
-            op = lexer.peek()
         elif op not in infix_bp:
+            fake_op = True
             lexer.push({0: '*', 1: '*', 2: '|'}[order(lhs)])
-            op = lexer.peek()
 
-        if min_bp > infix_bp[op]:
+        if infix_bp[lexer.peek()] < min_bp:
+            if fake_op:
+                lexer.consume()
             break
-        lexer.consume()
+        op = lexer.consume()
         rhs = pratt(lexer, infix_bp[op] + assoc[op])
         lhs = Cons([Atom(op), lhs, rhs])
     return lhs
@@ -81,12 +87,15 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
 # could be O(1) if we stored an `order` on 
 # each sexp (the recursion would be attr lookup)
 def order(sexp):
+    orders = {'D': 2, 
+            'f': 1, 'g': 1}
     if isinstance(sexp, Atom):
-        orders = {'D': 2, 
-                  'f': 1, 'g': 1}
         return orders.get(sexp.char, 0)
     if isinstance(sexp.v[0], Atom):
-        return order(sexp.v[-1])
+        if sexp.v[0].char == '^' and orders[sexp.v[1].char] == 2:
+            return 2
+        else:
+            return order(sexp.v[-1])
     return order(sexp.v[0]) - 1
 
 def strip_apps(sexp):
@@ -124,8 +133,8 @@ def tests():
     eq("f$x", "(f x)")
     eq("Df(x)", "((D f) x)")
     eq("DDf(x)", "((D (D f)) x)")
-    # eq("D(f)(x)", "((D f) x)")
-    # eq("D^2f(x)", "(((^ D 2) f) x)")
+    eq("D(f)(x)", "((D f) x)")
+    eq("D^2f(x)", "(((^ D 2) f) x)")
 
     # order()
     assert(order(Atom("D")) == 2)

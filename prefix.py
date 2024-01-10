@@ -17,6 +17,8 @@ class Lexer():
         return self.toks.pop()
     def push(self, op):
         self.toks.append(op)
+    def is_done(self):
+        return self.peek() is None
     def peek(self):
         try: return self.toks[-1]
         except IndexError: return None
@@ -50,11 +52,10 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
     else:
         lhs = Atom(lexer.consume())
 
-    while lexer.peek() is not None:
-        op = lexer.peek()
-        if infix_bp[op] < min_bp:
+    while not lexer.is_done():
+        if infix_bp[lexer.peek()] < min_bp:
             break
-        lexer.consume()
+        op = lexer.consume()
         rhs = pratt(lexer, infix_bp[op] + assoc[op])
         lhs = Cons([Atom(op), lhs, rhs])
     return lhs

@@ -14,3 +14,7 @@
 - [ ] code, like python (explicit *)
 - [ ] fully parenthesized
 
+
+## Justification for why it can't be pretty
+
+The reason we can't do the nice paren thing is every ( needs to consume a ) but we have infix parens, which means we'd need weird logic for that. We can avoid that by consuming on entry to loop and breaking.
