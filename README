@@ -2,10 +2,10 @@
 
 The following are Pratt parsers in increasing levels of expressiveness:
 
-- `infix.py` just does infix
-- `prefix.py` adds prefix parsing
-- `juxt.py` adds implicit * juxtapose
-- `paren.py` adds parethesis grouping and function application
+- `1-infix.py` just does infix
+- `2-prefix.py` adds prefix parsing
+- `3-juxt.py` adds implicit * juxtapose
+- `4-paren.py` adds parethesis grouping and function application
 
 They are meant to be looked at in order using `diff` to see the changes introduced.
 I have spent a lot of time making it as intelligible as possible so hopefully no explanation
