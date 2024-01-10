@@ -27,9 +27,11 @@ If you want another stringification, checkout the `test.py` which also has RPN, 
 
 ## missing:
 
-- f(x,y) functions of multiple args
-- '>=' '>' '<' '<=' comparison
-- '==' '!=' && || boolean operators
-- {1, 2, 3} sets, vector [1, 2, 3]
-- \in \subset \union \intersection \difference \disjoint-union (or +) set ops
+- `:=` assignment (right assoc)
+- `f(x,y)` functions of multiple args
+- `>=` `>` `<` `<=` comparison
+- `==` `!=` && || boolean operators
+- `{1, 2, 3}` sets, vector `[1, 2, 3]`
+- `\in \subset \union \intersection \difference \disjoint-union (or +)` set ops
 
+- statements (function calls, assignment): everything else should be an expression.
