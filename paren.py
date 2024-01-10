@@ -27,6 +27,7 @@ class Lexer():
 assoc = { # 1 means left-assoc: (1 - 2) - 3
     '+': 1, '-': 1, '*': 1, '/': 1,
     '^': 0,
+    '!': 1, # factorial
     '$': 0, # function application
     '|': 0, # operator application
     '(': 0, # grouping, kinda wrong way of thinking about it
@@ -63,10 +64,10 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
         op = lexer.peek()
         if op == '(':
             lexer.consume()
-            lexer.push('*' if order(lhs) == 0 else '$')
+            lexer.push({0: '*', 1: '$', 2: '|'}[order(lhs)])
             op = lexer.peek()
         elif op not in infix_bp:
-            lexer.push('|' if order(lhs) == 2 else '*')
+            lexer.push({0: '*', 1: '*', 2: '|'}[order(lhs)])
             op = lexer.peek()
 
         if min_bp > infix_bp[op]:
@@ -85,7 +86,7 @@ def order(sexp):
                   'f': 1, 'g': 1}
         return orders.get(sexp.char, 0)
     if isinstance(sexp.v[0], Atom):
-        return order(sexp.v[1])
+        return order(sexp.v[-1])
     return order(sexp.v[0]) - 1
 
 def strip_apps(sexp):
