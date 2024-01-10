@@ -17,6 +17,8 @@ class Lexer():
         return self.toks.pop()
     def is_done(self):
         return self.peek() is None
+    def peek_juxtapose(self):
+        return self.peek() not in infix_bp and self.peek() != '('
     def peek(self):
         try: return self.toks[-1]
         except IndexError: return None
@@ -35,17 +37,31 @@ infix_bp = {
     '^': 3,
 }
 
+prefix_bp = {
+    '-': 1, '+': 1,
+}
+
 def parse(s):
     return pratt(Lexer(s), 0)
 
 def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
-    lhs = Atom(lexer.consume())
+    if lexer.peek() in prefix_bp:
+        op = lexer.consume()
+        rhs = pratt(lexer, prefix_bp[op] + assoc[op])
+        lhs = Cons([Atom(op), rhs])
+    else:
+        lhs = Atom(lexer.consume())
+
     while not lexer.is_done():
         op = lexer.peek()
+        if lexer.peek_juxtapose():
+            op = '*'
         bp = infix_bp[op] + assoc[op]
+
         if infix_bp[op] < min_bp:
             break
-        lexer.consume()
+        if not lexer.peek_juxtapose():
+            lexer.consume()
         rhs = pratt(lexer, bp)
         lhs = Cons([Atom(op), lhs, rhs])
     return lhs

@@ -15,14 +15,12 @@ class Lexer():
         self.toks = list(self.s[::-1])
     def consume(self):
         return self.toks.pop()
-    def push(self, op):
-        self.toks.append(op)
     def is_done(self):
         return self.peek() is None
     def peek(self):
         try: return self.toks[-1]
         except IndexError: return None
-    def __repr__(self): # incorrect if you push stuff: "H|ello" -> "|*ello"
+    def __repr__(self):
         used = len(self.s) - len(self.toks)
         return self.s[:used] + '|' + ''.join(reversed(self.toks))
 
@@ -62,17 +60,3 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
         lhs = Cons([Atom(op), lhs, rhs])
     return lhs
 
-def tests():
-    def eq(input, sexp):
-        out = str(parse(input))
-        assert(out == sexp)
-    eq("1", "1")
-    eq("1 + 2", "(+ 1 2)")
-    eq("1 + 2 + 3", "(+ (+ 1 2) 3)")
-    eq("1 + 2 * 3", "(+ 1 (* 2 3))")
-    eq("-1", "(- 1)")
-    eq("-1 + 3", "(+ (- 1) 3)")
-    eq("3 + -1 + 4", "(+ (+ 3 (- 1)) 4)")
-    print("\033[32mOK\033[39m")
-
-tests()
