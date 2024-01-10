@@ -5,46 +5,58 @@ class Atom(NamedTuple):
     def __repr__(self):
         return f'{self.char}'
 class Cons(NamedTuple):
-    char: str
     v: List[Union['Atom', 'Cons']]
     def __repr__(self):
-        return f'({self.char} ' + ' '.join([str(s) for s in self.v]) + ')'
+        return f'(' + ' '.join([str(s) for s in self.v]) + ')'
 
 class Lexer():
     def __init__(self, s):
-        self.s = s.replace(" ", "")
-        self.i = -1
-    def next(self):
-        self.i += 1
-        return self.s[self.i]
+        self.s = s.replace(" ", "") # for repr
+        self.toks = list(self.s[::-1])
+    def consume(self):
+        return self.toks.pop()
+    def push(self, op):
+        self.toks.append(op)
     def peek(self):
-        return self.s[self.i+1] if self.i+1 < len(self.s) else None
+        try: return self.toks[-1]
+        except IndexError: return None
+    def __repr__(self): # incorrect if you push stuff: "H|ello" -> "|*ello"
+        used = len(self.s) - len(self.toks)
+        return self.s[:used] + '|' + ''.join(reversed(self.toks))
 
-infix_binding_power = {
-    '+': (1, 2), '-': (1, 2), 
-    '*': (3, 4), '/': (3, 4),
-    '.': (8, 7)
+assoc = { # 1 means left-assoc: (1 - 2) - 3
+    '+': 1, '-': 1, '*': 1, '/': 1,
+    '^': 0,
+}
+
+infix_bp = {
+    '+': 1, '-': 1, 
+    '*': 2, '/': 2,
+    '^': 3,
 }
 
 def parse(s):
     return pratt(Lexer(s), 0)
 
 def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
-    lhs = Atom(lexer.next())
-    while True:
-        if (op := lexer.peek()) is None:
+    lhs = Atom(lexer.consume())
+    while lexer.peek() is not None:
+        op = lexer.peek()
+        if infix_bp[op] < min_bp:
             break
-        l_bp, r_bp = infix_binding_power[op]
-        if l_bp < min_bp:
-            break
-        lexer.next()
-        rhs = pratt(lexer, r_bp)
-        lhs = Cons(op, [lhs, rhs])
+        lexer.consume()
+        rhs = pratt(lexer, infix_bp[op] + assoc[op])
+        lhs = Cons([Atom(op), lhs, rhs])
     return lhs
 
 def tests():
-    assert(str(parse("1")) == "1")
-    assert(str(parse("1 + 2")) == "(+ 1 2)")
-    assert(str(parse("1 + 2 * 3")) == "(+ 1 (* 2 3))")
+    def eq(input, sexp):
+        out = str(parse(input))
+        assert(out == sexp)
+    eq("1", "1")
+    eq("1 + 2", "(+ 1 2)")
+    eq("1 + 2 + 3", "(+ (+ 1 2) 3)")
+    eq("1 + 2 * 3", "(+ 1 (* 2 3))")
+    print("\033[32mOK\033[39m")
 
 tests()
