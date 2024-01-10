@@ -1,9 +1,9 @@
 import sys
 
 def tests(parse, features):
-    def eq(input, sexp):
-        out = str(parse(input))
-        assert(out == sexp)
+    def eq(input, ans):
+        out = sexp(parse(input))
+        assert(out == ans)
     if 'infix' in features:
         eq("1", "1")
         eq("1 + 2", "(+ 1 2)")
@@ -77,5 +77,36 @@ def main():
             return 1
     return 0
 
-exit(main())
+# ===========
+#  Stringify
+# ===========
 
+from cons import Atom, Cons
+
+def strip_apps(exp):
+    """strip out $ and | operators"""
+    if isinstance(exp, Atom):
+        return exp
+    if isinstance(exp.v[0], Atom) and (exp.v[0].char == '$' or exp.v[0].char == '|'):
+        return Cons(list(map(strip_apps, exp.v[1:])))
+    return Cons(list(map(strip_apps, exp.v)))
+
+def sexp(exp):
+    return str(strip_apps(exp))
+
+def rpn(exp):
+    if isinstance(exp, Atom):
+        return f'{exp.char}'
+    return rpn(exp.v[1]) + ' ' + rpn(exp.v[2]) + ' ' + rpn(exp.v[0])
+
+def fully_parenthesized(exp):
+    def r(e):
+        if isinstance(exp, Atom):
+            return f'{e.char}'
+        return '(' + r(e.v[1]) + ' ' + r(e.v[0]) + ' ' + r(e.v[2]) + ')'
+    return r(exp)
+
+def python_syntax(exp):
+    pass
+
+exit(main())

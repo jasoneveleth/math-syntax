@@ -1,13 +1,5 @@
-from typing import NamedTuple, List, Union
-
-class Atom(NamedTuple):
-    char: str
-    def __repr__(self):
-        return f'{self.char}'
-class Cons(NamedTuple):
-    v: List[Union['Atom', 'Cons']]
-    def __repr__(self):
-        return f'(' + ' '.join([str(s) for s in self.v]) + ')'
+from typing import Union
+from cons import Atom, Cons
 
 class Lexer():
     def __init__(self, s):
@@ -53,7 +45,7 @@ prefix_bp = {
 }
 
 def parse(s):
-    return strip_apps(pratt(Lexer(s), 0))
+    return pratt(Lexer(s), 0)
 
 def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
     if lexer.peek() in prefix_bp:
@@ -86,22 +78,14 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
 # O(height of taking lefts down tree).
 # could be O(1) if we stored an `order` on 
 # each sexp (the recursion would be attr lookup)
-def order(sexp):
+def order(exp):
     orders = {'D': 2, 
             'f': 1, 'g': 1}
-    if isinstance(sexp, Atom):
-        return orders.get(sexp.char, 0)
-    if isinstance(sexp.v[0], Atom):
-        if sexp.v[0].char == '^' and orders[sexp.v[1].char] == 2:
+    if isinstance(exp, Atom):
+        return orders.get(exp.char, 0)
+    if isinstance(exp.v[0], Atom):
+        if exp.v[0].char == '^' and orders[exp.v[1].char] == 2:
             return 2
         else:
-            return order(sexp.v[-1])
-    return order(sexp.v[0]) - 1
-
-def strip_apps(sexp):
-    if isinstance(sexp, Atom):
-        return sexp
-    if isinstance(sexp.v[0], Atom) and (sexp.v[0].char == '$' or sexp.v[0].char == '|'):
-        return Cons(list(map(strip_apps, sexp.v[1:])))
-    return Cons(list(map(strip_apps, sexp.v)))
-
+            return order(exp.v[-1])
+    return order(exp.v[0]) - 1

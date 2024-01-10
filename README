@@ -1,6 +1,6 @@
 # Architecture
 
-The following are Pratt parsers in increasing levels of difficulty
+The following are Pratt parsers in increasing levels of expressiveness:
 
 - `infix.py` just does infix
 - `prefix.py` adds prefix parsing
@@ -11,15 +11,23 @@ They are meant to be looked at in order using `diff` to see the changes required
 I have spent a lot of time making it as intelligible as possible so hopefully no explanation
 is necessary.
 
-Run tests with `python test.py infix prefix juxt paren` or just `python test.py paren`.
+Run tests with `test.py`. It will print the commandline args it needs with `python test.py -h`.
+
+Finally, `cons.py` has definitions of `Atom` and `Cons` which we build our syntax tree from (like lisp).
 
 # Output
 
 The return value from `parse` in each parser will stringify as an S-expression.
-If you want another stringification, checkout the `test.py` which also has RPN, python, fully parenthesized
+You might notice some strange operators in the output, like `$` and `|`.
+Those are function and operator application.
+You can remove them and get normal lispy S-expressions with `strip_apps()` in `test.py`.
+The `sexp()` function in `test.py` will automatically do this.
+
+If you want another stringification, checkout the `test.py` which also has RPN, python, fully parenthesized syntax.
 
 ## missing:
 
+- f(x,y) functions of multiple args
 - '>=' '>' '<' '<=' comparison
 - '==' '!=' && || boolean operators
 - {1, 2, 3} sets, vector [1, 2, 3]

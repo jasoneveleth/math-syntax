@@ -1,13 +1,5 @@
-from typing import NamedTuple, List, Union
-
-class Atom(NamedTuple):
-    char: str
-    def __repr__(self):
-        return f'{self.char}'
-class Cons(NamedTuple):
-    v: List[Union['Atom', 'Cons']]
-    def __repr__(self):
-        return f'(' + ' '.join([str(s) for s in self.v]) + ')'
+from typing import Union
+from cons import Atom, Cons
 
 class Lexer():
     def __init__(self, s):
