@@ -82,15 +82,15 @@ def main():
 #  Stringify
 # ===========
 
-from cons import Atom, Cons
+from lst import Atom, Lst
 
 def strip_apps(exp):
     """strip out $ and | operators"""
     if isinstance(exp, Atom):
         return exp
     if isinstance(exp.v[0], Atom) and (exp.v[0].char == '$' or exp.v[0].char == '|'):
-        return Cons(list(map(strip_apps, exp.v[1:])))
-    return Cons(list(map(strip_apps, exp.v)))
+        return Lst(list(map(strip_apps, exp.v[1:])))
+    return Lst(list(map(strip_apps, exp.v)))
 
 def sexp(exp):
     return str(strip_apps(exp))

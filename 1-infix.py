@@ -1,5 +1,5 @@
 from typing import Union
-from cons import Atom, Cons
+from lst import Atom, Lst
 
 class Lexer():
     def __init__(self, s):
@@ -30,7 +30,7 @@ infix_bp = {
 def parse(s):
     return pratt(Lexer(s), 0)
 
-def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
+def pratt(lexer, min_bp) -> Union['Atom', 'Lst']:
     lhs = Atom(lexer.consume())
     while not lexer.is_done():
         op = lexer.peek()
@@ -39,6 +39,6 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
             break
         lexer.consume()
         rhs = pratt(lexer, bp)
-        lhs = Cons([Atom(op), lhs, rhs])
+        lhs = Lst([Atom(op), lhs, rhs])
     return lhs
 

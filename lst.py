@@ -5,7 +5,7 @@ class Atom(NamedTuple):
     def __repr__(self):
         return f'{self.char}'
 
-class Cons(NamedTuple):
-    v: List[Union['Atom', 'Cons']]
+class Lst(NamedTuple):
+    v: List[Union['Atom', 'Lst']]
     def __repr__(self):
         return f'(' + ' '.join(map(str, self.v)) + ')'

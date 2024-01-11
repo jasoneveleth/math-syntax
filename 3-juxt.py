@@ -1,5 +1,5 @@
 from typing import Union
-from cons import Atom, Cons
+from lst import Atom, Lst
 
 class Lexer():
     def __init__(self, s):
@@ -36,11 +36,11 @@ prefix_bp = {
 def parse(s):
     return pratt(Lexer(s), 0)
 
-def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
+def pratt(lexer, min_bp) -> Union['Atom', 'Lst']:
     if lexer.peek() in prefix_bp:
         op = lexer.consume()
         rhs = pratt(lexer, prefix_bp[op] + assoc[op])
-        lhs = Cons([Atom(op), rhs])
+        lhs = Lst([Atom(op), rhs])
     else:
         lhs = Atom(lexer.consume())
 
@@ -55,6 +55,6 @@ def pratt(lexer, min_bp) -> Union['Atom', 'Cons']:
         if not lexer.peek_juxtapose():
             lexer.consume()
         rhs = pratt(lexer, bp)
-        lhs = Cons([Atom(op), lhs, rhs])
+        lhs = Lst([Atom(op), lhs, rhs])
     return lhs
 
